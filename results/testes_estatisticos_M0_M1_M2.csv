@@ -1,0 +1,6 @@
+﻿teste,comparacao,estatistica,p_bruto,p_ajustado_holm,alpha,significativo,observacao
+Friedman,M0 vs M1 vs M2,7.05,0.029,,0.05,Sim,Teste global para os erros absolutos diários pareados (46 dias).
+Kendall W,M0 vs M1 vs M2,0.0766,,,,,Tamanho de efeito associado ao teste de Friedman; efeito pequeno.
+Wilcoxon,M0 vs M1,308.0,0.01,0.021,0.05,Sim,Comparação pareada dos erros absolutos diários; correção de Holm.
+Wilcoxon,M0 vs M2,220.0,0.006,0.019,0.05,Sim,Comparação pareada dos erros absolutos diários; correção de Holm.
+Wilcoxon,M1 vs M2,485.0,0.551,0.551,0.05,Não,Comparação pareada dos erros absolutos diários; correção de Holm.
