@@ -15,9 +15,8 @@ tcc-brilho-solar/
 ├── README.md
 ├── requirements.txt
 ├── firmware/
-│   └── esp32c6_brilho_solar/
-│       ├── esp32c6_brilho_solar.ino
-│       └── README.md
+│   ├── esp32c6_brilho_solar.ino
+│   └── README.md
 ├── notebooks/
 │   ├── 01_preprocessamento_GOES19_CPTEC.ipynb
 │   ├── 02_modelagem_extratrees_M0_M1_M2.ipynb
