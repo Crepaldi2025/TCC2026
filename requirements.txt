@@ -1,0 +1,22 @@
+# Dependências Python do repositório associado ao TCC
+#
+# Observação:
+# As versões originais dos notebooks foram executadas no Google Colab.
+# Como as versões exatas dos pacotes não foram registradas nos notebooks,
+# este arquivo lista as dependências efetivamente utilizadas sem fixar
+# versões artificiais. Após a criação do repositório, poderá ser criada
+# uma release reprodutível com versões congeladas a partir de uma
+# execução validada.
+
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+pvlib
+openpyxl
+joblib
+requests
+beautifulsoup4
+xarray
+netCDF4
