@@ -1,0 +1,14 @@
+﻿Função / módulo;Pino(s) do ESP32-C6;Observação
+Sensor BH1750 principal (I²C);GPIO6 (SDA), GPIO7 (SCL);Barramento I²C principal
+RTC PCF8563;GPIO6 (SDA), GPIO7 (SCL);Compartilha o barramento I²C principal
+Seleção de endereço do sensor J8;GPIO8;Controle do pino ADDR
+Seleção de endereço do sensor J11;GPIO1;Controle do pino ADDR
+Sensor BH1750 secundário J9;GPIO2 (SDA), GPIO15 (SCL);Barramento I²C secundário / software I²C
+Cartão MicroSD – CS;GPIO21;Interface SPI
+Cartão MicroSD – MISO;GPIO20;Interface SPI
+Cartão MicroSD – SCK;GPIO19;Interface SPI
+Cartão MicroSD – MOSI;GPIO18;Interface SPI
+Monitoramento da bateria;GPIO0;Leitura ADC da tensão da bateria
+UART para módulo LoRa (RAK3172);GPIO4 / GPIO5;Comunicação serial com o módulo
+Botão BOOT / manutenção;GPIO9;Janela de manutenção / depuração
+USB / programação;USB nativo;Gravação do firmware e monitor serial
