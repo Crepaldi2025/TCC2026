@@ -48,6 +48,8 @@ firmware/esp32c6_brilho_solar/esp32c6_brilho_solar.ino
 
 A configuração utilizada na coleta foi de aquisição a cada **5 minutos**, com operação diurna programada e armazenamento dos registros em cartão microSD.
 
+Na configuração definitiva empregada em campo, foi utilizado o sensor BH1750 identificado como J11, com registros de iluminância realizados em intervalos de cinco minutos.
+
 ## Processamento dos dados GOES-19
 
 O notebook
