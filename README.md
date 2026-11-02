@@ -4,9 +4,9 @@ Repositório associado ao Trabalho de Conclusão de Curso (TCC) **“Desenvolvim
 
 ## Objetivo
 
-O projeto tem como objetivo desenvolver e avaliar um sistema de baixo custo para estimar a duração do brilho solar a partir de medições de iluminância realizadas com um sensor óptico conectado a um ESP32-C6.
+O projeto tem como objetivo desenvolver e avaliar um sistema de baixo custo para estimar a duração do brilho solar a partir de medições de iluminância obtidas com um sensor BH1750 conectado a um microcontrolador ESP32-C6.
 
-A avaliação do protótipo utiliza como referência o sensor Campbell-Stokes Digital CSD3 e incorpora, em etapas posteriores, informações de geometria solar e dados de nebulosidade obtidos a partir do satélite GOES-19/CPTEC.
+A estimativa é realizada por meio de modelos de aprendizado de máquina baseados no algoritmo Extra Trees, incorporando informações da geometria solar e da nebulosidade obtidas do satélite GOES-19. Os resultados são avaliados utilizando como referência o sensor Campbell-Stokes Digital CSD3.
 
 ## Estrutura do repositório
 
