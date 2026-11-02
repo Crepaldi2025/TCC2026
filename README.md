@@ -170,6 +170,8 @@ requirements.txt
 
 ## Reprodutibilidade do modelo M2
 
+[Verificacao numerica do M2](documentacao/VALIDACAO_M2.md)
+
 O notebook de reprodução do M2 está disponível para execução no Google Colab:
 
 [**Abrir notebook M2 no Google Colab**](https://colab.research.google.com/github/Crepaldi2025/TCC2026/blob/main/notebooks/TCC2026_M2_Reprodutibilidade_Banca.ipynb)
