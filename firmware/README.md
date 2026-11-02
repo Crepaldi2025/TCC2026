@@ -10,11 +10,22 @@ A versão publicada corresponde ao código efetivamente utilizado durante a camp
 
 ## Hardware principal
 
-- ESP32-C6
-- sensor BH1750
-- RTC PCF8563
-- microSD
-- monitoramento da tensão da bateria
+- ESP32-C6: microcontrolador.
+- BH1750 J11: sensor de iluminância (I²C, endereço 0x23).
+- PCF8563: relógio de tempo real (I²C, endereço 0x51).
+- Cartão microSD: armazenamento dos registros.
+- Monitoramento da tensão da bateria.
+
+### Conexões principais
+
+| Interface | GPIO |
+|---|---|
+| I²C SDA | 6 |
+| I²C SCL | 7 |
+| BH1750 J11 ADDR | 1 (nível baixo) |
+| microSD CS | 21 |
+
+Na configuração de campo documentada, o firmware utiliza exclusivamente o sensor J11.
 
 ## Configuração de aquisição
 
