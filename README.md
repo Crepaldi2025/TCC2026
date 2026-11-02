@@ -168,17 +168,37 @@ As versões recomendadas devem ser registradas em:
 requirements.txt
 ```
 
-## Reprodutibilidade
+## Reprodutibilidade do modelo M2
 
-Para reproduzir a análise:
+O notebook de reprodução do M2 está disponível para execução no Google Colab:
 
-1. preparar os arquivos de entrada conforme descrito em `data/README.md`;
-2. executar o processamento dos dados GOES-19;
-3. executar o notebook de modelagem M0/M1/M2;
-4. executar a análise estatística;
-5. executar a validação temporal independente.
+[**Abrir notebook M2 no Google Colab**](https://colab.research.google.com/github/Crepaldi2025/TCC2026/blob/main/notebooks/TCC2026_M2_Reprodutibilidade_Banca.ipynb)
 
-Os caminhos absolutos utilizados originalmente no Google Colab devem ser substituídos por caminhos relativos na versão publicada no GitHub.
+### Procedimento
+
+1. Abrir o notebook pelo link acima.
+2. Selecionar **Ambiente de execução > Executar tudo**.
+3. Conferir os resultados e as métricas apresentados ao final.
+
+Os dados necessários estão disponíveis em `data/`, com hashes SHA-256 registrados em `data/inventario_SHA256.csv`.
+
+As versões das bibliotecas observadas na execução de 02/11/2026 estão documentadas em `requirements_M2.txt`.
+
+### Resultados de referência
+
+Avaliação OOF do M2 para 46 dias, de 01/07 a 15/08/2026:
+
+| Métrica | Resultado |
+|---|---:|
+| MAE diário | 24,95 min |
+| RMSE diário | 36,77 min |
+| Viés diário | -1,54 min |
+| R² diário | 0,9166 |
+| Correlação de Pearson | 0,9652 |
+
+A execução independente apresentou métricas compatíveis com esses valores, considerando o arredondamento. A identidade de todas as predições individuais ainda não foi auditada.
+
+O modelo M2 original e seus parâmetros foram preservados.
 
 ## Observação sobre versões intermediárias
 
