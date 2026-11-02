@@ -11,20 +11,14 @@ A avaliação do protótipo utiliza como referência o sensor Campbell-Stokes Di
 ## Estrutura do repositório
 
 ```text
-tcc-brilho-solar/
-├── README.md
-├── requirements.txt
-├── firmware/
-│   ├── esp32c6_brilho_solar.ino
-│   └── README.md
-├── notebooks/
-│   ├── 01_preprocessamento_GOES19_CPTEC.ipynb
-│   ├── 02_modelagem_extratrees_M0_M1_M2.ipynb
-│   ├── 03_analise_estatistica_M0_M1_M2.ipynb
-│   └── 04_validacao_temporal_M2.ipynb
+TCC2026/
 ├── data/
-│   └── README.md
-└── figures/
+├── documentacao/
+├── firmware/
+├── notebooks/
+├── results/
+├── README.md
+└── requirements.txt
 ```
 
 ## Firmware do protótipo
