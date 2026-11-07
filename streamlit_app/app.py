@@ -128,6 +128,7 @@ elif pagina == "Dados experimentais":
             subset=["timestamp_grade_5min_local"]
         ).sort_values("timestamp_grade_5min_local")
 
+        
         datas = sorted(
             df["timestamp_grade_5min_local"]
             .dt.date.unique()
@@ -136,49 +137,101 @@ elif pagina == "Dados experimentais":
         if len(datas) == 0:
             st.warning("Nenhuma data válida encontrada.")
         else:
-            data = st.selectbox(
-                "Selecione a data:",
-                datas,
-                format_func=lambda d: d.strftime("%d/%m/%Y"),
+            modo = st.radio(
+                "Seleção temporal",
+                ["Data específica", "Período"],
+                horizontal=True,
             )
 
-            dados_dia = df[
-                df["timestamp_grade_5min_local"].dt.date
-                == data
-            ]
+            if modo == "Data específica":
+                data = st.selectbox(
+                    "Selecione a data:",
+                    datas,
+                    format_func=lambda d: d.strftime(
+                        "%d/%m/%Y"
+                    ),
+                )
 
-            fig = px.line(
-                dados_dia,
-                x="timestamp_grade_5min_local",
-                y="j11_lux",
-                labels={
-                    "timestamp_grade_5min_local":
-                        "Hora local",
-                    "j11_lux": "Iluminância (lux)",
-                },
-                title="Evolução temporal da iluminância",
-            )
+                dados_selecionados = df[
+                    df["timestamp_grade_5min_local"]
+                    .dt.date == data
+                ]
 
-            fig.update_traces(
-                line=dict(color="#E69F00")
-            )
+            else:
+                col1, col2 = st.columns(2)
 
-            fig.update_layout(
-                hovermode="x unified",
-                xaxis_title="Hora local (UTC−3)",
-                yaxis_title="Iluminância (lux)",
-            )
+                with col1:
+                    inicio = st.date_input(
+                        "Data inicial",
+                        value=datas[0],
+                        min_value=datas[0],
+                        max_value=datas[-1],
+                    )
 
-            st.plotly_chart(
-                fig,
-                use_container_width=True,
-            )
+                with col2:
+                    fim = st.date_input(
+                        "Data final",
+                        value=datas[-1],
+                        min_value=datas[0],
+                        max_value=datas[-1],
+                    )
 
-            st.caption(
-                "Dados experimentais originais do "
-                "sensor BH1750 J11. Valores ausentes "
-                "não são interpolados."
-            )
+                if inicio > fim:
+                    st.error(
+                        "A data inicial deve ser anterior "
+                        "ou igual à data final."
+                    )
+                    st.stop()
+
+                mascara = (
+                    (df["timestamp_grade_5min_local"].dt.date
+                     >= inicio)
+                    &
+                    (df["timestamp_grade_5min_local"].dt.date
+                     <= fim)
+                )
+
+                dados_selecionados = df.loc[mascara]
+
+            if dados_selecionados.empty:
+                st.warning(
+                    "Não existem registros no intervalo."
+                )
+            else:
+                fig = px.line(
+                    dados_selecionados,
+                    x="timestamp_grade_5min_local",
+                    y="j11_lux",
+                    labels={
+                        "timestamp_grade_5min_local":
+                            "Hora local",
+                        "j11_lux":
+                            "Iluminância (lux)",
+                    },
+                    title="Evolução temporal da iluminância",
+                )
+
+                fig.update_traces(
+                    line=dict(color="#E69F00"),
+                    connectgaps=False,
+                )
+
+                fig.update_layout(
+                    hovermode="x unified",
+                    xaxis_title="Data e hora local (UTC−3)",
+                    yaxis_title="Iluminância (lux)",
+                )
+
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                )
+
+                st.caption(
+                    "Dados experimentais do BH1750 J11. "
+                    "Valores ausentes não são interpolados."
+                )
+
 
 
 
