@@ -38,51 +38,53 @@ st.markdown(
     padding-bottom: 3rem;
 }
 
+
 .hero {
-    background: linear-gradient(120deg, #102D50, #216A91);
-    padding: 50px 35px;
-    border-radius: 18px;
+    background: linear-gradient(120deg, #163B5C, #286888);
+    padding: 20px 28px;
+    border-radius: 10px;
     text-align: center;
     color: #FFFFFF;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .hero h1 {
     color: #FFFFFF !important;
-    font-size: clamp(30px, 4vw, 48px);
+    font-size: clamp(25px, 3vw, 34px);
     line-height: 1.2;
-    margin: 15px 0 20px 0;
+    margin: 8px 0 10px 0;
 }
 
 .hero .sun {
-    font-size: 58px;
-    line-height: 1.3;
+    font-size: 32px;
+    line-height: 1.1;
 }
 
 .hero .subtitle {
-    font-size: 20px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.4;
     color: #E1EFF8;
 }
 
 .hero .author {
-    font-size: 23px;
+    font-size: 17px;
     font-weight: 600;
-    margin-top: 36px;
+    margin-top: 16px;
 }
 
 .hero .institution {
-    font-size: 17px;
-    margin-top: 12px;
+    font-size: 14px;
+    margin-top: 5px;
     color: #D5E9F5;
 }
 
 .hero .year {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 600;
     color: #FFDA79;
-    margin-top: 12px;
+    margin-top: 5px;
 }
+
 
 .section-text {
     font-size: 17px;
