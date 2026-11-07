@@ -83,11 +83,14 @@ if pagina == "Visão geral":
     )
 
 
-elif pagina == "Dados experimentais":
-    st.title("Dados experimentais")
 
+elif pagina == "Dados experimentais":
     import pandas as pd
+    import plotly.express as px
     from pathlib import Path
+
+    st.title("Dados experimentais")
+    st.subheader("Iluminância — sensor BH1750 J11")
 
     arquivo = (
         Path(__file__).resolve().parent.parent
@@ -95,27 +98,88 @@ elif pagina == "Dados experimentais":
         / "Base_Consolidada_J11_CSD3_CNR4.xlsx"
     )
 
-    if arquivo.exists():
-        excel = pd.ExcelFile(arquivo)
-
-        aba = st.selectbox(
-            "Selecione a planilha:",
-            excel.sheet_names
+    @st.cache_data
+    def carregar_dados(caminho):
+        return pd.read_excel(
+            caminho,
+            sheet_name="Dados_5min",
+            usecols=[
+                "timestamp_grade_5min_local",
+                "j11_lux",
+            ],
         )
 
-        df = pd.read_excel(
-            arquivo,
-            sheet_name=aba,
-            nrows=10
-        )
-
-        st.write("Dimensão da amostra:", df.shape)
-        st.write("Nomes das colunas:")
-        st.write(df.columns.tolist())
-        st.dataframe(df, use_container_width=True)
-
+    if not arquivo.exists():
+        st.error("Arquivo experimental não encontrado.")
     else:
-        st.error("Arquivo de dados não encontrado.")
+        df = carregar_dados(str(arquivo))
+
+        df["timestamp_grade_5min_local"] = pd.to_datetime(
+            df["timestamp_grade_5min_local"],
+            errors="coerce",
+        )
+
+        df["j11_lux"] = pd.to_numeric(
+            df["j11_lux"],
+            errors="coerce",
+        )
+
+        df = df.dropna(
+            subset=["timestamp_grade_5min_local"]
+        ).sort_values("timestamp_grade_5min_local")
+
+        datas = sorted(
+            df["timestamp_grade_5min_local"]
+            .dt.date.unique()
+        )
+
+        if len(datas) == 0:
+            st.warning("Nenhuma data válida encontrada.")
+        else:
+            data = st.selectbox(
+                "Selecione a data:",
+                datas,
+                format_func=lambda d: d.strftime("%d/%m/%Y"),
+            )
+
+            dados_dia = df[
+                df["timestamp_grade_5min_local"].dt.date
+                == data
+            ]
+
+            fig = px.line(
+                dados_dia,
+                x="timestamp_grade_5min_local",
+                y="j11_lux",
+                labels={
+                    "timestamp_grade_5min_local":
+                        "Hora local",
+                    "j11_lux": "Iluminância (lux)",
+                },
+                title="Evolução temporal da iluminância",
+            )
+
+            fig.update_traces(
+                line=dict(color="#E69F00")
+            )
+
+            fig.update_layout(
+                hovermode="x unified",
+                xaxis_title="Hora local (UTC−3)",
+                yaxis_title="Iluminância (lux)",
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True,
+            )
+
+            st.caption(
+                "Dados experimentais originais do "
+                "sensor BH1750 J11. Valores ausentes "
+                "não são interpolados."
+            )
+
 
 
 elif pagina == "Modelos M0, M1 e M2":
