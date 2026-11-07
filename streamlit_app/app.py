@@ -30,57 +30,127 @@ st.sidebar.markdown(
     "(https://github.com/Crepaldi2025/TCC2026)"
 )
 
+
 if pagina == "Visão geral":
-    st.title("Estimativa da Duração do Brilho Solar")
-    st.subheader("Projeto de TCC — UNIFEI")
 
     st.markdown(
         """
-        Aplicação científica para análise experimental e
-        estimativa da duração do brilho solar utilizando
-        sensores de iluminância, geometria solar,
-        informações de satélite e aprendizado de máquina.
+        <style>
+        .hero {
+            padding: 48px 36px;
+            border-radius: 18px;
+            background: linear-gradient(
+                125deg, #102D50, #206A91
+            );
+            color: white;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .hero .sun {
+            font-size: 58px;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: clamp(30px, 4vw, 48px);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .hero .subtitle {
+            font-size: 19px;
+            color: #E1EFF8;
+            line-height: 1.7;
+        }
+
+        .hero .author {
+            margin-top: 36px;
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        .hero .year {
+            margin-top: 6px;
+            font-size: 17px;
+            color: #D5E9F5;
+        }
+
+        .intro {
+            padding: 12px 8px;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+        </style>
+
+        <div class="hero">
+            <div class="sun">☀️</div>
+
+            <h1>
+                Estimativa da Duração
+                do Brilho Solar
+            </h1>
+
+            <div class="subtitle">
+                Instrumentação de baixo custo,
+                geometria solar e aprendizado
+                de máquina
+            </div>
+
+            <div class="author">
+                Paulo César Crepaldi
+            </div>
+
+            <div class="year">
+                Universidade Federal de Itajubá
+                <br>
+                UNIFEI · 2026
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+        ### Sobre o projeto
+
+        Este trabalho apresenta o desenvolvimento
+        e a avaliação de uma metodologia para
+        estimar a duração do brilho solar por meio
+        de um sensor de iluminância de baixo custo,
+        associado à geometria solar e a técnicas
+        de aprendizado de máquina.
+
+        A pesquisa utiliza observações experimentais
+        do sensor **BH1750 (J11)**, registros de
+        referência do **CSD3** e informações
+        complementares de nebulosidade do
+        satélite **GOES-19**.
+
+        A aplicação disponibiliza ferramentas
+        para exploração das observações,
+        análise dos modelos e avaliação
+        dos resultados científicos.
         """
     )
 
     st.divider()
-    st.header("Indicadores do modelo M2")
-
-    c1, c2, c3, c4 = st.columns(4)
-
-    c1.metric("Dias avaliados", "46")
-    c2.metric("MAE diário", "24,95 min")
-    c3.metric("RMSE diário", "36,77 min")
-    c4.metric("R² diário", "0,9166")
-
-    st.caption(
-        "Resultados consolidados do M2 na avaliação "
-        "original de 46 dias. Não representam "
-        "desempenho em dados futuros."
-    )
-
-    st.divider()
-    st.header("Metodologia")
 
     st.markdown(
         """
-        **Aquisição:** sensor BH1750 (J11), com
-        registros de iluminância a cada 5 minutos.
+        **Trabalho de Conclusão de Curso — 2026**
 
-        **Geometria solar:** determinação da posição
-        aparente do Sol por algoritmos astronômicos.
+        Universidade Federal de Itajubá (UNIFEI)
 
-        **Aprendizado de máquina:** modelos baseados
-        em Extra Trees para estimar a duração
-        do brilho solar.
-
-        **Informações complementares:** variáveis
-        de nebulosidade derivadas do GOES-19.
-
-        **Referência:** registros do instrumento
-        Campbell-Stokes digital CSD3.
+        [Consultar o repositório científico no GitHub](
+        https://github.com/Crepaldi2025/TCC2026
+        )
         """
     )
+
 
 
 
