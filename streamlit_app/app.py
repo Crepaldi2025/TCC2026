@@ -32,6 +32,7 @@ GITHUB = "https://github.com/Crepaldi2025/TCC2026"
 
 st.markdown(
     """
+    
 <style>
 .block-container {
     padding-top: 2rem;
@@ -90,6 +91,14 @@ st.markdown(
     font-size: 17px;
     line-height: 1.7;
 }
+
+.hero .advisors {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #DDECF6;
+    margin-top: 10px;
+}
+
 </style>
     """,
     unsafe_allow_html=True,
@@ -176,6 +185,11 @@ if pagina == "Visão geral":
         '<br>e aprendizado de máquina'
         '</div>'
         '<div class="author">Paulo César Crepaldi</div>'
+        '<div class="advisors">'
+        'Orientador: Prof. Dr. Marcelo de Paula Corrêa'
+        '<br>'
+        'Coorientadora: Profa. Dra. Fabrina Bolzan Martins'
+        '</div>'
         '<div class="institution">'
         'Universidade Federal de Itajubá — UNIFEI'
         '</div>'
