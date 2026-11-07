@@ -1,6 +1,14 @@
 
+from pathlib import Path
+
+import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
-import textwrap
+
+
+# ============================================================
+# CONFIGURACAO GERAL
+# ============================================================
 
 st.set_page_config(
     page_title="Brilho Solar | UNIFEI",
@@ -9,7 +17,87 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Navegação
+RAIZ = Path(__file__).resolve().parent.parent
+
+ARQUIVO_DADOS = (
+    RAIZ / "data" / "Base_Consolidada_J11_CSD3_CNR4.xlsx"
+)
+
+GITHUB = "https://github.com/Crepaldi2025/TCC2026"
+
+
+# ============================================================
+# ESTILO VISUAL
+# ============================================================
+
+st.markdown(
+    """
+<style>
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.hero {
+    background: linear-gradient(120deg, #102D50, #216A91);
+    padding: 50px 35px;
+    border-radius: 18px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    color: #FFFFFF !important;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.2;
+    margin: 15px 0 20px 0;
+}
+
+.hero .sun {
+    font-size: 58px;
+    line-height: 1.3;
+}
+
+.hero .subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #E1EFF8;
+}
+
+.hero .author {
+    font-size: 23px;
+    font-weight: 600;
+    margin-top: 36px;
+}
+
+.hero .institution {
+    font-size: 17px;
+    margin-top: 12px;
+    color: #D5E9F5;
+}
+
+.hero .year {
+    font-size: 22px;
+    font-weight: 600;
+    color: #FFDA79;
+    margin-top: 12px;
+}
+
+.section-text {
+    font-size: 17px;
+    line-height: 1.7;
+}
+</style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# ============================================================
+# MENU LATERAL
+# ============================================================
+
 st.sidebar.title("☀️ Brilho Solar")
 st.sidebar.caption("TCC — UNIFEI | 2026")
 
@@ -26,188 +114,176 @@ pagina = st.sidebar.radio(
 )
 
 st.sidebar.divider()
+
 st.sidebar.markdown(
-    "[Repositório científico no GitHub]"
-    "(https://github.com/Crepaldi2025/TCC2026)"
+    f"[Repositório científico no GitHub]({GITHUB})"
 )
 
 
+# ============================================================
+# CARREGAMENTO DOS DADOS
+# ============================================================
+
+@st.cache_data(show_spinner="Carregando dados experimentais...")
+def carregar_dados(caminho):
+    df = pd.read_excel(
+        caminho,
+        sheet_name="Dados_5min",
+        usecols=[
+            "timestamp_grade_5min_local",
+            "j11_lux",
+        ],
+    )
+
+    df["timestamp_grade_5min_local"] = pd.to_datetime(
+        df["timestamp_grade_5min_local"],
+        errors="coerce",
+    )
+
+    df["j11_lux"] = pd.to_numeric(
+        df["j11_lux"],
+        errors="coerce",
+    )
+
+    df = df.dropna(
+        subset=["timestamp_grade_5min_local"]
+    )
+
+    df = df.sort_values(
+        "timestamp_grade_5min_local"
+    ).reset_index(drop=True)
+
+    return df
+
+
+# ============================================================
+# PAGINA 1 - VISAO GERAL
+# ============================================================
+
 if pagina == "Visão geral":
 
-    st.markdown(
-        textwrap.dedent("""
-        <style>
-        .hero {
-            padding: 48px 36px;
-            border-radius: 18px;
-            background: linear-gradient(
-                125deg, #102D50, #206A91
-            );
-            color: white;
-            text-align: center;
-            margin-bottom: 28px;
-        }
+    # HTML montado sem indentacao para evitar
+    # interpretacao como bloco de codigo Markdown.
 
-        .hero .sun {
-            font-size: 58px;
-            margin-bottom: 12px;
-        }
-
-        .hero h1 {
-            color: white;
-            font-size: clamp(30px, 4vw, 48px);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 18px;
-        }
-
-        .hero .subtitle {
-            font-size: 19px;
-            color: #E1EFF8;
-            line-height: 1.7;
-        }
-
-        .hero .author {
-            margin-top: 36px;
-            font-size: 21px;
-            font-weight: 600;
-        }
-
-        .hero .year {
-            margin-top: 6px;
-            font-size: 17px;
-            color: #D5E9F5;
-        }
-
-        .intro {
-            padding: 12px 8px;
-            font-size: 17px;
-            line-height: 1.8;
-        }
-        </style>
-
-        <div class="hero">
-            <div class="sun">☀️</div>
-
-            <h1>
-                Estimativa da Duração
-                do Brilho Solar
-            </h1>
-
-            <div class="subtitle">
-                Instrumentação de baixo custo,
-                geometria solar e aprendizado
-                de máquina
-            </div>
-
-            <div class="author">
-                Paulo César Crepaldi
-            </div>
-
-            <div class="year">
-                Universidade Federal de Itajubá
-                <br>
-                UNIFEI · 2026
-            </div>
-        </div>
-                """),
-        unsafe_allow_html=True,
+    hero = (
+        '<div class="hero">'
+        '<div class="sun">☀️</div>'
+        '<h1>Estimativa da Duração<br>do Brilho Solar</h1>'
+        '<div class="subtitle">'
+        'Instrumentação de baixo custo, geometria solar'
+        '<br>e aprendizado de máquina'
+        '</div>'
+        '<div class="author">Paulo César Crepaldi</div>'
+        '<div class="institution">'
+        'Universidade Federal de Itajubá — UNIFEI'
+        '</div>'
+        '<div class="year">2026</div>'
+        '</div>'
     )
 
     st.markdown(
+        hero,
+        unsafe_allow_html=True,
+    )
+
+    st.header("Sobre o projeto")
+
+    st.markdown(
         """
-        ### Sobre o projeto
+Este trabalho apresenta o desenvolvimento e a avaliação
+de uma metodologia para estimar a duração do brilho solar
+utilizando um sensor de iluminância de baixo custo,
+geometria solar e técnicas de aprendizado de máquina.
 
-        Este trabalho apresenta o desenvolvimento
-        e a avaliação de uma metodologia para
-        estimar a duração do brilho solar por meio
-        de um sensor de iluminância de baixo custo,
-        associado à geometria solar e a técnicas
-        de aprendizado de máquina.
+A pesquisa utiliza observações experimentais do sensor
+**BH1750 (J11)**, registros de referência do **CSD3**
+e informações complementares de nebulosidade obtidas
+pelo satélite **GOES-19**.
 
-        A pesquisa utiliza observações experimentais
-        do sensor **BH1750 (J11)**, registros de
-        referência do **CSD3** e informações
-        complementares de nebulosidade do
-        satélite **GOES-19**.
-
-        A aplicação disponibiliza ferramentas
-        para exploração das observações,
-        análise dos modelos e avaliação
-        dos resultados científicos.
+A aplicação disponibiliza ferramentas para exploração
+dos dados experimentais, compreensão dos modelos
+e avaliação dos resultados científicos.
         """
     )
 
     st.divider()
 
-    st.markdown(
-        """
-        **Trabalho de Conclusão de Curso — 2026**
+    st.subheader("Estrutura da aplicação")
 
-        Universidade Federal de Itajubá (UNIFEI)
+    c1, c2, c3 = st.columns(3)
 
-        [Consultar o repositório científico no GitHub](
-        https://github.com/Crepaldi2025/TCC2026
+    with c1:
+        st.markdown(
+            """
+            #### 📊 Dados
+
+            Visualização interativa das medições
+            de iluminância e das observações
+            meteorológicas.
+            """
         )
-        """
+
+    with c2:
+        st.markdown(
+            """
+            #### 🌳 Modelos
+
+            Descrição das metodologias M0, M1 e M2,
+            baseadas em aprendizado de máquina.
+            """
+        )
+
+    with c3:
+        st.markdown(
+            """
+            #### 🔬 Validação
+
+            Comparação dos modelos e análise
+            dos resultados experimentais.
+            """
+        )
+
+    st.divider()
+
+    st.caption(
+        "Trabalho de Conclusão de Curso | "
+        "Universidade Federal de Itajubá | 2026"
     )
 
 
-
+# ============================================================
+# PAGINA 2 - DADOS EXPERIMENTAIS
+# ============================================================
 
 elif pagina == "Dados experimentais":
-    import pandas as pd
-    import plotly.express as px
-    from pathlib import Path
 
     st.title("Dados experimentais")
-    st.subheader("Iluminância — sensor BH1750 J11")
 
-    arquivo = (
-        Path(__file__).resolve().parent.parent
-        / "data"
-        / "Base_Consolidada_J11_CSD3_CNR4.xlsx"
-    )
+    st.subheader("Iluminância — BH1750 J11")
 
-    @st.cache_data
-    def carregar_dados(caminho):
-        return pd.read_excel(
-            caminho,
-            sheet_name="Dados_5min",
-            usecols=[
-                "timestamp_grade_5min_local",
-                "j11_lux",
-            ],
+    if not ARQUIVO_DADOS.exists():
+
+        st.error(
+            "O arquivo de dados experimentais não foi encontrado."
         )
 
-    if not arquivo.exists():
-        st.error("Arquivo experimental não encontrado.")
     else:
-        df = carregar_dados(str(arquivo))
 
-        df["timestamp_grade_5min_local"] = pd.to_datetime(
-            df["timestamp_grade_5min_local"],
-            errors="coerce",
-        )
+        df = carregar_dados(str(ARQUIVO_DADOS))
 
-        df["j11_lux"] = pd.to_numeric(
-            df["j11_lux"],
-            errors="coerce",
-        )
-
-        df = df.dropna(
-            subset=["timestamp_grade_5min_local"]
-        ).sort_values("timestamp_grade_5min_local")
-
-        
         datas = sorted(
             df["timestamp_grade_5min_local"]
             .dt.date.unique()
         )
 
         if len(datas) == 0:
-            st.warning("Nenhuma data válida encontrada.")
+
+            st.warning(
+                "Nenhuma data válida foi encontrada."
+            )
+
         else:
+
             st.subheader("Seleção temporal")
 
             modo = st.radio(
@@ -221,9 +297,11 @@ elif pagina == "Dados experimentais":
             )
 
             if modo == "Série completa":
-                dados_selecionados = df.copy()
+
+                dados = df.copy()
 
             elif modo == "Data específica":
+
                 data = st.selectbox(
                     "Selecione a data:",
                     datas,
@@ -232,12 +310,13 @@ elif pagina == "Dados experimentais":
                     ),
                 )
 
-                dados_selecionados = df[
+                dados = df[
                     df["timestamp_grade_5min_local"]
                     .dt.date == data
-                ]
+                ].copy()
 
             else:
+
                 col1, col2 = st.columns(2)
 
                 with col1:
@@ -257,69 +336,143 @@ elif pagina == "Dados experimentais":
                     )
 
                 if inicio > fim:
-                    st.error("Intervalo de datas inválido.")
+
+                    st.error(
+                        "A data inicial deve ser anterior "
+                        "ou igual à data final."
+                    )
                     st.stop()
 
                 mascara = (
-                    (df["timestamp_grade_5min_local"].dt.date
-                     >= inicio)
+                    (
+                        df["timestamp_grade_5min_local"].dt.date
+                        >= inicio
+                    )
                     &
-                    (df["timestamp_grade_5min_local"].dt.date
-                     <= fim)
+                    (
+                        df["timestamp_grade_5min_local"].dt.date
+                        <= fim
+                    )
                 )
 
-                dados_selecionados = df.loc[mascara].copy()
+                dados = df.loc[mascara].copy()
 
-            if dados_selecionados.empty:
+            # ------------------------------------------------
+            # INFORMACOES DO PERIODO
+            # ------------------------------------------------
+
+            if dados.empty:
+
                 st.warning(
-                    "Não existem registros no período."
+                    "Não existem registros no período selecionado."
                 )
+
             else:
-                # Lacunas temporais superiores a 5 minutos
-                # não devem ser ligadas por linhas.
-                dados_plot = dados_selecionados[
-                    ["timestamp_grade_5min_local", "j11_lux"]
+
+                inicio_real = dados[
+                    "timestamp_grade_5min_local"
+                ].min()
+
+                fim_real = dados[
+                    "timestamp_grade_5min_local"
+                ].max()
+
+                n_validos = dados["j11_lux"].notna().sum()
+
+                c1, c2, c3 = st.columns(3)
+
+                c1.metric(
+                    "Primeiro registro",
+                    inicio_real.strftime("%d/%m/%Y"),
+                )
+
+                c2.metric(
+                    "Último registro",
+                    fim_real.strftime("%d/%m/%Y"),
+                )
+
+                c3.metric(
+                    "Medições válidas J11",
+                    f"{n_validos:,}".replace(",", "."),
+                )
+
+                # --------------------------------------------
+                # GRAFICO INTERATIVO
+                # --------------------------------------------
+
+                grafico = dados[
+                    [
+                        "timestamp_grade_5min_local",
+                        "j11_lux",
+                    ]
                 ].copy()
 
-                dados_plot = dados_plot.sort_values(
+                grafico = grafico.sort_values(
                     "timestamp_grade_5min_local"
                 )
 
-                diferenca = dados_plot[
+                # Insere separadores nas lacunas maiores
+                # que o intervalo nominal de 5 minutos.
+
+                diferencas = grafico[
                     "timestamp_grade_5min_local"
                 ].diff()
 
                 lacunas = (
-                    diferenca > pd.Timedelta(minutes=5)
+                    diferencas > pd.Timedelta(minutes=5)
                 )
 
-                dados_plot["segmento"] = (
-                    lacunas.cumsum().astype(str)
-                )
+                linhas = []
 
-                fig = px.line(
-                    dados_plot,
-                    x="timestamp_grade_5min_local",
-                    y="j11_lux",
-                    color="segmento",
-                    labels={
-                        "timestamp_grade_5min_local":
-                            "Data e hora local",
-                        "j11_lux": "Iluminância (lux)",
-                    },
-                    title="Série temporal da iluminância J11",
-                )
+                for i, registro in grafico.iterrows():
 
-                fig.update_traces(
-                    line=dict(color="#E69F00"),
-                    showlegend=False,
-                    connectgaps=False,
+                    if lacunas.loc[i]:
+                        linhas.append(
+                            {
+                                "tempo": pd.NaT,
+                                "lux": float("nan"),
+                            }
+                        )
+
+                    linhas.append(
+                        {
+                            "tempo": registro[
+                                "timestamp_grade_5min_local"
+                            ],
+                            "lux": registro["j11_lux"],
+                        }
+                    )
+
+                dados_plot = pd.DataFrame(linhas)
+
+                fig = go.Figure()
+
+                fig.add_trace(
+                    go.Scattergl(
+                        x=dados_plot["tempo"],
+                        y=dados_plot["lux"],
+                        mode="lines",
+                        name="J11",
+                        line=dict(
+                            color="#E69F00",
+                            width=1.5,
+                        ),
+                        connectgaps=False,
+                    )
                 )
 
                 fig.update_layout(
-                    hovermode="x",
+                    title="Série temporal da iluminância J11",
                     xaxis_title="Data e hora local (UTC−3)",
                     yaxis_title="Iluminância (lux)",
+                    hovermode="x",
+                    height=520,
+                    margin=dict(
+                        l=30,
+                        r=20,
+                        t=60,
+                        b=30,
+                    ),
                 )
 
                 fig.update_xaxes(
@@ -332,33 +485,132 @@ elif pagina == "Dados experimentais":
                 )
 
                 st.caption(
-                    "Medições originais do sensor BH1750 J11. "
-                    "Lacunas temporais não são interpoladas."
+                    "Fonte: base experimental J11/CSD3/CNR4. "
+                    "Os dados são apresentados sem interpolação. "
+                    "Lacunas temporais não são conectadas."
                 )
 
-        
-                
+                with st.expander(
+                    "Consultar registros selecionados"
+                ):
+
+                    st.dataframe(
+                        dados,
+                        use_container_width=True,
+                    )
 
 
+# ============================================================
+# PAGINA 3 - MODELOS
+# ============================================================
 
 elif pagina == "Modelos M0, M1 e M2":
+
     st.title("Modelos M0, M1 e M2")
-    st.info("Módulo em desenvolvimento.")
 
-elif pagina == "Resultados e validação":
-    st.title("Resultados e validação")
-    st.info("Módulo em desenvolvimento.")
+    st.markdown(
+        """
+        Os modelos foram desenvolvidos para estimar
+        a duração do brilho solar utilizando
+        informações experimentais e variáveis
+        físicas e meteorológicas.
 
-elif pagina == "Simulador M2":
-    st.title("Simulador do modelo M2")
-    st.warning(
-        "A execução do modelo será habilitada "
-        "após a verificação do pipeline original."
+        **M0 — Extra Trees**
+
+        Modelo baseado em medições do sensor J11
+        e variáveis associadas à geometria solar.
+
+        **M1 — Pós-processamento físico**
+
+        Aplicação de critérios físicos e temporais
+        às estimativas produzidas pelo modelo M0.
+
+        **M2 — Extra Trees com correção residual GOES**
+
+        Combinação das estimativas de base com
+        informações adicionais de nebulosidade
+        provenientes do satélite GOES-19.
+        """
     )
 
-elif pagina == "Reprodutibilidade":
-    st.title("Reprodutibilidade científica")
+    st.info(
+        "Diagramas, preditores e informações técnicas "
+        "serão incorporados nesta página."
+    )
+
+
+# ============================================================
+# PAGINA 4 - RESULTADOS E VALIDACAO
+# ============================================================
+
+elif pagina == "Resultados e validação":
+
+    st.title("Resultados e validação")
+
     st.markdown(
-        "[Acessar o repositório TCC2026]"
-        "(https://github.com/Crepaldi2025/TCC2026)"
+        """
+        Esta seção apresentará a avaliação científica
+        dos modelos M0, M1 e M2.
+
+        Serão incluídos os indicadores de desempenho,
+        os gráficos comparativos e a análise dos
+        erros de estimativa.
+        """
+    )
+
+    st.info(
+        "Os resultados serão carregados dos arquivos "
+        "científicos originais do projeto."
+    )
+
+
+# ============================================================
+# PAGINA 5 - SIMULADOR M2
+# ============================================================
+
+elif pagina == "Simulador M2":
+
+    st.title("Simulador do modelo M2")
+
+    st.markdown(
+        """
+        Este módulo permitirá executar o modelo
+        treinado utilizando novos registros
+        experimentais compatíveis com o pipeline
+        científico original.
+        """
+    )
+
+    st.warning(
+        "A execução do modelo M2 ainda não está habilitada. "
+        "O pipeline original e as dependências precisam "
+        "ser verificados antes da disponibilização."
+    )
+
+
+# ============================================================
+# PAGINA 6 - REPRODUTIBILIDADE
+# ============================================================
+
+elif pagina == "Reprodutibilidade":
+
+    st.title("Reprodutibilidade científica")
+
+    st.markdown(
+        """
+        O projeto disponibiliza código-fonte,
+        conjuntos de dados, documentação técnica
+        e informações necessárias à reprodução
+        dos procedimentos científicos.
+        """
+    )
+
+    st.markdown(
+        f"[Acessar o repositório TCC2026]({GITHUB})"
+    )
+
+    st.info(
+        "A documentação da execução independente "
+        "e a auditoria dos resultados serão "
+        "apresentadas nesta seção."
     )
