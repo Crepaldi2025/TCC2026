@@ -137,13 +137,22 @@ elif pagina == "Dados experimentais":
         if len(datas) == 0:
             st.warning("Nenhuma data válida encontrada.")
         else:
+            st.subheader("Seleção temporal")
+
             modo = st.radio(
-                "Seleção temporal",
-                ["Data específica", "Período"],
+                "Visualização",
+                [
+                    "Série completa",
+                    "Data específica",
+                    "Período personalizado",
+                ],
                 horizontal=True,
             )
 
-            if modo == "Data específica":
+            if modo == "Série completa":
+                dados_selecionados = df.copy()
+
+            elif modo == "Data específica":
                 data = st.selectbox(
                     "Selecione a data:",
                     datas,
@@ -177,10 +186,7 @@ elif pagina == "Dados experimentais":
                     )
 
                 if inicio > fim:
-                    st.error(
-                        "A data inicial deve ser anterior "
-                        "ou igual à data final."
-                    )
+                    st.error("Intervalo de datas inválido.")
                     st.stop()
 
                 mascara = (
@@ -191,35 +197,62 @@ elif pagina == "Dados experimentais":
                      <= fim)
                 )
 
-                dados_selecionados = df.loc[mascara]
+                dados_selecionados = df.loc[mascara].copy()
 
             if dados_selecionados.empty:
                 st.warning(
-                    "Não existem registros no intervalo."
+                    "Não existem registros no período."
                 )
             else:
+                # Lacunas temporais superiores a 5 minutos
+                # não devem ser ligadas por linhas.
+                dados_plot = dados_selecionados[
+                    ["timestamp_grade_5min_local", "j11_lux"]
+                ].copy()
+
+                dados_plot = dados_plot.sort_values(
+                    "timestamp_grade_5min_local"
+                )
+
+                diferenca = dados_plot[
+                    "timestamp_grade_5min_local"
+                ].diff()
+
+                lacunas = (
+                    diferenca > pd.Timedelta(minutes=5)
+                )
+
+                dados_plot["segmento"] = (
+                    lacunas.cumsum().astype(str)
+                )
+
                 fig = px.line(
-                    dados_selecionados,
+                    dados_plot,
                     x="timestamp_grade_5min_local",
                     y="j11_lux",
+                    color="segmento",
                     labels={
                         "timestamp_grade_5min_local":
-                            "Hora local",
-                        "j11_lux":
-                            "Iluminância (lux)",
+                            "Data e hora local",
+                        "j11_lux": "Iluminância (lux)",
                     },
-                    title="Evolução temporal da iluminância",
+                    title="Série temporal da iluminância J11",
                 )
 
                 fig.update_traces(
                     line=dict(color="#E69F00"),
+                    showlegend=False,
                     connectgaps=False,
                 )
 
                 fig.update_layout(
-                    hovermode="x unified",
+                    hovermode="x",
                     xaxis_title="Data e hora local (UTC−3)",
                     yaxis_title="Iluminância (lux)",
+                )
+
+                fig.update_xaxes(
+                    rangeslider_visible=True
                 )
 
                 st.plotly_chart(
@@ -228,10 +261,12 @@ elif pagina == "Dados experimentais":
                 )
 
                 st.caption(
-                    "Dados experimentais do BH1750 J11. "
-                    "Valores ausentes não são interpolados."
+                    "Medições originais do sensor BH1750 J11. "
+                    "Lacunas temporais não são interpoladas."
                 )
 
+        
+                
 
 
 
