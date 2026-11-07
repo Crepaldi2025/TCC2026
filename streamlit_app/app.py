@@ -82,9 +82,41 @@ if pagina == "Visão geral":
         """
     )
 
+
 elif pagina == "Dados experimentais":
     st.title("Dados experimentais")
-    st.info("Módulo em desenvolvimento.")
+
+    import pandas as pd
+    from pathlib import Path
+
+    arquivo = (
+        Path(__file__).resolve().parent.parent
+        / "data"
+        / "Base_Consolidada_J11_CSD3_CNR4.xlsx"
+    )
+
+    if arquivo.exists():
+        excel = pd.ExcelFile(arquivo)
+
+        aba = st.selectbox(
+            "Selecione a planilha:",
+            excel.sheet_names
+        )
+
+        df = pd.read_excel(
+            arquivo,
+            sheet_name=aba,
+            nrows=10
+        )
+
+        st.write("Dimensão da amostra:", df.shape)
+        st.write("Nomes das colunas:")
+        st.write(df.columns.tolist())
+        st.dataframe(df, use_container_width=True)
+
+    else:
+        st.error("Arquivo de dados não encontrado.")
+
 
 elif pagina == "Modelos M0, M1 e M2":
     st.title("Modelos M0, M1 e M2")
