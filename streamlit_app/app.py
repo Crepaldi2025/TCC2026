@@ -1,5 +1,6 @@
 
 import streamlit as st
+import textwrap
 
 st.set_page_config(
     page_title="Brilho Solar | UNIFEI",
@@ -34,7 +35,7 @@ st.sidebar.markdown(
 if pagina == "Visão geral":
 
     st.markdown(
-        """
+        textwrap.dedent("""
         <style>
         .hero {
             padding: 48px 36px;
@@ -109,7 +110,7 @@ if pagina == "Visão geral":
                 UNIFEI · 2026
             </div>
         </div>
-        """,
+                """),
         unsafe_allow_html=True,
     )
 
